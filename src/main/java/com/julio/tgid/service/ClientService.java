@@ -11,33 +11,44 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 public class ClientService {
 
     @Autowired
     private ClientRepository repository;
 
-
     public List<ClientDTO> findAll(){
         List<Client> clients = repository.findAll();
-        return clients.stream().map(client -> new ClientDTO(client.getFirstName().concat(client.getLastName()),client.getCpf(),
+        return clients.stream().map(client -> new ClientDTO(client.getFirstName(), client.getLastName(), client.getCpf(),
                 client.getEmail(),client.getBalance())).toList();
     }
     public ClientDTO findById(UUID id){
         Client client = repository.findById(id).orElseThrow();
-        return new ClientDTO(client.getFirstName().concat(client.getLastName()),client.getCpf(),
+        return new ClientDTO(client.getFirstName(),client.getLastName(),client.getCpf(),
                 client.getEmail(),client.getBalance());
     }
     public ClientDTO findByCpf(String cpf){
         Client client = repository.findByCpf(cpf).orElseThrow();
-        return new ClientDTO(client.getFirstName().concat(client.getLastName()),client.getCpf(),
+        return new ClientDTO(client.getFirstName(),client.getLastName(),client.getCpf(),
                 client.getEmail(),client.getBalance());
     }
     @Transactional
-    public void saveClient(Client client){
-        repository.save(client);
+    public ClientDTO saveClient(ClientDTO client){
+        Optional<Client> user = repository.findByCpf(client.cpf());
+        if (user.isPresent() ) {
+            throw new IllegalArgumentException();
+        }
+
+        Client c1 = new Client();
+        c1.setFirstName(client.firstName());
+        c1.setLastName(client.lastName());
+        c1.setCpf(client.cpf());
+        c1.setEmail(client.email());
+        c1.setBalance(client.balance());
+        repository.save(c1);
+
+        return new ClientDTO(c1.getFirstName(),c1.getLastName(), c1.getCpf(), c1.getEmail(),c1.getBalance());
+
     }
     @Transactional
     public void deleteClient (UUID id){
@@ -45,6 +56,11 @@ public class ClientService {
             throw new IllegalArgumentException();
         }
         repository.deleteById(id);
+    }
+    @Transactional
+    public void deleteClientByCpf (String cpf){
+        Client c1 = repository.findByCpf(cpf).orElseThrow();
+        repository.delete(c1);
     }
 
 }
