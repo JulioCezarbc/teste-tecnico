@@ -20,17 +20,17 @@ public class ClientService {
     public List<ClientDTO> findAll(){
         List<Client> clients = repository.findAll();
         return clients.stream().map(client -> new ClientDTO(client.getFirstName(), client.getLastName(), client.getCpf(),
-                client.getEmail(),client.getBalance())).toList();
+                client.getEmail())).toList();
     }
     public ClientDTO findById(UUID id){
         Client client = repository.findById(id).orElseThrow();
         return new ClientDTO(client.getFirstName(),client.getLastName(),client.getCpf(),
-                client.getEmail(),client.getBalance());
+                client.getEmail());
     }
     public ClientDTO findByCpf(String cpf){
         Client client = repository.findByCpf(cpf).orElseThrow();
         return new ClientDTO(client.getFirstName(),client.getLastName(),client.getCpf(),
-                client.getEmail(),client.getBalance());
+                client.getEmail());
     }
     @Transactional
     public ClientDTO saveClient(ClientDTO client){
@@ -44,10 +44,9 @@ public class ClientService {
         c1.setLastName(client.lastName());
         c1.setCpf(client.cpf());
         c1.setEmail(client.email());
-        c1.setBalance(client.balance());
         repository.save(c1);
 
-        return new ClientDTO(c1.getFirstName(),c1.getLastName(), c1.getCpf(), c1.getEmail(),c1.getBalance());
+        return new ClientDTO(c1.getFirstName(),c1.getLastName(), c1.getCpf(), c1.getEmail());
 
     }
     @Transactional

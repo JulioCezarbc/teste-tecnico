@@ -26,18 +26,15 @@ public class Client {
     @Column(unique = true, nullable = false)
     @Email
     private String email;
-    @Column(nullable = false)
-    @Positive
-    private BigDecimal balance;
+
 
     public Client(){}
-    public Client(UUID id, String firstName, String lastName, String cpf, String email, BigDecimal balance) {
+    public Client(UUID id, String firstName, String lastName, String cpf, String email) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.cpf = cpf;
         this.email = email;
-        this.balance = balance;
     }
 
     public UUID getId() {
@@ -80,13 +77,6 @@ public class Client {
         this.email = email;
     }
 
-    public @Positive BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(@Positive BigDecimal balance) {
-        this.balance = balance;
-    }
 
     @Override
     public boolean equals(Object o) {

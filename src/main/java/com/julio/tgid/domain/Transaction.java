@@ -4,7 +4,7 @@ import com.julio.tgid.domain.enumerated.TransactionType;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -32,28 +32,24 @@ public class Transaction {
     @Column(nullable = false)
     private BigDecimal finalAmount;
 
-    @Column(nullable = false)
-    private BigDecimal taxApplied;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-
     private TransactionType type;
 
     @Column(nullable = false)
-    private Date timestamp;
+    private LocalDateTime timestamp;
 
     public Transaction(){}
 
     public Transaction(UUID id, Client client, Company company, BigDecimal amount,
-                       BigDecimal systemFee, BigDecimal finalAmount, BigDecimal taxApplied, TransactionType type, Date timestamp) {
+                       BigDecimal systemFee, BigDecimal finalAmount, TransactionType type, LocalDateTime timestamp) {
         this.id = id;
         this.client = client;
         this.company = company;
         this.amount = amount;
         this.systemFee = systemFee;
         this.finalAmount = finalAmount;
-        this.taxApplied = taxApplied;
         this.type = type;
         this.timestamp = timestamp;
     }
@@ -106,13 +102,6 @@ public class Transaction {
         this.finalAmount = finalAmount;
     }
 
-    public BigDecimal getTaxApplied() {
-        return taxApplied;
-    }
-
-    public void setTaxApplied(BigDecimal taxApplied) {
-        this.taxApplied = taxApplied;
-    }
 
     public TransactionType getType() {
         return type;
@@ -122,11 +111,11 @@ public class Transaction {
         this.type = type;
     }
 
-    public Date getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 
