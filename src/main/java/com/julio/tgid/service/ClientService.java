@@ -2,6 +2,8 @@ package com.julio.tgid.service;
 
 import com.julio.tgid.DTO.ClientDTO;
 import com.julio.tgid.domain.Client;
+import com.julio.tgid.exception.AlreadyInUse;
+import com.julio.tgid.exception.ObjectNotFound;
 import com.julio.tgid.repository.ClientRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +25,12 @@ public class ClientService {
                 client.getEmail())).toList();
     }
     public ClientDTO findById(UUID id){
-        Client client = repository.findById(id).orElseThrow();
+        Client client = repository.findById(id).orElseThrow(() -> new ObjectNotFound("Client "));
         return new ClientDTO(client.getFirstName(),client.getLastName(),client.getCpf(),
                 client.getEmail());
     }
     public ClientDTO findByCpf(String cpf){
-        Client client = repository.findByCpf(cpf).orElseThrow();
+        Client client = repository.findByCpf(cpf).orElseThrow(() -> new ObjectNotFound("Client "));
         return new ClientDTO(client.getFirstName(),client.getLastName(),client.getCpf(),
                 client.getEmail());
     }
@@ -36,7 +38,7 @@ public class ClientService {
     public ClientDTO saveClient(ClientDTO client){
         Optional<Client> user = repository.findByCpf(client.cpf());
         if (user.isPresent() ) {
-            throw new IllegalArgumentException();
+            throw new AlreadyInUse("Cpf ");
         }
 
         Client c1 = new Client();
@@ -52,13 +54,13 @@ public class ClientService {
     @Transactional
     public void deleteClient (UUID id){
         if (!repository.existsById(id)){
-            throw new IllegalArgumentException();
+            throw new ObjectNotFound("Client ");
         }
         repository.deleteById(id);
     }
     @Transactional
     public void deleteClientByCpf (String cpf){
-        Client c1 = repository.findByCpf(cpf).orElseThrow();
+        Client c1 = repository.findByCpf(cpf).orElseThrow(() -> new ObjectNotFound("Client "));
         repository.delete(c1);
     }
 

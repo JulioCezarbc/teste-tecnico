@@ -2,6 +2,8 @@ package com.julio.tgid.service;
 
 import com.julio.tgid.DTO.CompanyDTO;
 import com.julio.tgid.domain.Company;
+import com.julio.tgid.exception.AlreadyInUse;
+import com.julio.tgid.exception.ObjectNotFound;
 import com.julio.tgid.repository.CompanyRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +23,18 @@ public class CompanyService {
         return companies.stream().map(company -> new CompanyDTO(company.getCnpj(),company.getName(),company.getSystemFee(),company.getBalance())).toList();
     }
     public CompanyDTO findById(UUID id){
-        Company company = repository.findById(id).orElseThrow();
+        Company company = repository.findById(id).orElseThrow(() -> new ObjectNotFound("Company "));
         return new CompanyDTO(company.getCnpj(),company.getName(),company.getSystemFee(),company.getBalance());
     }
     public CompanyDTO findByCnpj(String cnpj){
-        Company company = repository.findByCnpj(cnpj).orElseThrow();
+        Company company = repository.findByCnpj(cnpj).orElseThrow(() -> new ObjectNotFound("Company "));
         return new CompanyDTO(company.getCnpj(),company.getName(),company.getSystemFee(),company.getBalance());
     }
     @Transactional
     public CompanyDTO saveCompany(CompanyDTO company){
         Optional<Company> comp = repository.findByCnpj(company.cnpj());
         if (comp.isPresent() ) {
-            throw new IllegalArgumentException();
+            throw new AlreadyInUse("Cnpj ");
         }
 
         Company c1 = new Company();
@@ -47,13 +49,13 @@ public class CompanyService {
     @Transactional
     public void deleteCompany (UUID id){
         if (!repository.existsById(id)){
-            throw new IllegalArgumentException();
+            throw new ObjectNotFound("Company ");
         }
         repository.deleteById(id);
     }
     @Transactional
     public void deleteCompanyByCnpj (String cnpj){
-        Company c1 = repository.findByCnpj(cnpj).orElseThrow();
+        Company c1 = repository.findByCnpj(cnpj).orElseThrow(() -> new ObjectNotFound("Company "));
         repository.delete(c1);
     }
 

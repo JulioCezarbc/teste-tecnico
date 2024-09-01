@@ -6,6 +6,7 @@ import com.julio.tgid.domain.Client;
 import com.julio.tgid.domain.Company;
 import com.julio.tgid.domain.Transaction;
 import com.julio.tgid.domain.enumerated.TransactionType;
+import com.julio.tgid.exception.ObjectNotFound;
 import com.julio.tgid.repository.ClientRepository;
 import com.julio.tgid.repository.CompanyRepository;
 import com.julio.tgid.repository.TransactionRepository;
@@ -30,8 +31,8 @@ public class TransactionService {
 
     @Transactional
     public TransactionResponseDTO transaction(TransactionDTO transactionDTO){
-        Client client = clientRepository.findByCpf(transactionDTO.cpf()).orElseThrow();
-        Company company = companyRepository.findByCnpj(transactionDTO.cnpj()).orElseThrow();
+        Client client = clientRepository.findByCpf(transactionDTO.cpf()).orElseThrow(() -> new ObjectNotFound("Client "));
+        Company company = companyRepository.findByCnpj(transactionDTO.cnpj()).orElseThrow(() -> new ObjectNotFound("Company "));
 
         BigDecimal systemFee = company.getSystemFee();
         BigDecimal finalAmount = transactionDTO.amount().subtract(systemFee);
