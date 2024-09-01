@@ -25,6 +25,8 @@ public class TransactionService {
     private ClientRepository clientRepository;
     @Autowired
     private CompanyRepository companyRepository;
+    @Autowired
+    private NotificationService notificationService;
 
     @Transactional
     public TransactionResponseDTO transaction(TransactionDTO transactionDTO){
@@ -55,13 +57,15 @@ public class TransactionService {
         transaction.setTimestamp(timestamp);
         repository.save(transaction);
 
+        notificationService.notifyCompany(transform(transaction));
+        notificationService.notifyClient(transform(transaction));
 
-
-
-
-        return new TransactionResponseDTO(transaction.getClient().getCpf(),transaction.getClient().getFirstName(),transaction.getCompany().getCnpj(),transaction.getCompany().getName(),
-                transaction.getAmount(),transaction.getSystemFee(),transaction.getFinalAmount(),transaction.getType(),transaction.getTimestamp());
+        return transform(transaction);
     }
 
+    private TransactionResponseDTO transform(Transaction transaction)  {
+        return new TransactionResponseDTO(transaction.getClient().getCpf(),transaction.getClient().getEmail(),transaction.getCompany().getCnpj(),transaction.getCompany().getName(),
+                transaction.getAmount(),transaction.getSystemFee(),transaction.getFinalAmount(),transaction.getType(),transaction.getTimestamp());
+    }
 
 }
