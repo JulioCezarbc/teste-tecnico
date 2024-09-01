@@ -3,6 +3,7 @@ package com.julio.tgid.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Positive;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -15,28 +16,28 @@ public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     @Column(length = 20, nullable = false)
     private String firstName;
     @Column(length = 20, nullable = false)
     private String lastName;
     @Column(unique = true, nullable = false, length = 11)
+    @CPF
     private String cpf;
     @Column(unique = true, nullable = false)
     @Email
     private String email;
     @Column(nullable = false)
     @Positive
-    private BigDecimal saldo;
+    private BigDecimal balance;
 
     public Client(){}
-    public Client(UUID id, String firstName, String lastName, String cpf, String email, BigDecimal saldo) {
+    public Client(UUID id, String firstName, String lastName, String cpf, String email, BigDecimal balance) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.cpf = cpf;
         this.email = email;
-        this.saldo = saldo;
+        this.balance = balance;
     }
 
     public UUID getId() {
@@ -79,12 +80,12 @@ public class Client {
         this.email = email;
     }
 
-    public @Positive BigDecimal getSaldo() {
-        return saldo;
+    public @Positive BigDecimal getBalance() {
+        return balance;
     }
 
-    public void setSaldo(@Positive BigDecimal saldo) {
-        this.saldo = saldo;
+    public void setBalance(@Positive BigDecimal balance) {
+        this.balance = balance;
     }
 
     @Override
